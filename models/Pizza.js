@@ -8,22 +8,45 @@
 // Schema constructor and model function, so we'll just import them.
 const { Schema, model } = require('mongoose');
 
-const PizzaSchema = new Schema({
-    pizzaName: {
-        type: String
+const PizzaSchema = new Schema(
+    {
+        pizzaName: {
+            type: String
+        },
+        createdBy: {
+            type: String
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        },
+        size: {
+            type: String,
+            default: 'Large'
+        },
+        toppings: [],
+        // we need to tell Mongoose to expect an ObjectId and 
+        // to tell it that its data comes from the Comment model.
+        comments: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Comment'
+            }
+        ]
     },
-    createdBy: {
-        type: String
+    // we need to tell the schema that it can use virtuals.
+    {
+    toJSON: {
+        virtuals: true,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    size: {
-        type: String,
-        default: 'Large'
-    },
-    toppings: []
+    // We set id to false because this is a virtual that Mongoose returns, and we don’t need it.
+    id: false
+    }
+);
+
+// get total count of comments and replies on retrieval
+PizzaSchema.virtual('commentCount').get(function() {
+    return this.comments.length;
 });
 
 // create the Pizza model using the PizzaSchema

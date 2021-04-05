@@ -4,6 +4,19 @@ const pizzaController = {
     // get all pizzas
     getAllPizza(req, res) {
         Pizza.find({})
+        // To populate a field, just chain the .populate() method onto your query, passing in an 
+        // object with the key path plus the value of the field you want populated.
+        .populate({
+            path: 'comments',
+            // we can tell Mongoose that we don't care about the __v field on comments either. 
+            // The minus sign - in front of the field indicates that we don't want it to be returned. 
+            // If we didn't have it, it would mean that it would return only the __v field.
+            select: '-__v'
+        })
+        .select('-__v')
+        // sort in DESC order by the _id value. This gets the newest pizza because a timestamp 
+        // value is hidden somewhere inside the MongoDB ObjectId.
+        .sort({ _id: -1 })
         .then(dbPizzaData => res.json(dbPizzaData))
         .catch(err => {
             console.log(err);
@@ -14,6 +27,11 @@ const pizzaController = {
     // get one pizza by id
     getPizzaById({ params }, res) {
         Pizza.findOne({ _id: params.id })
+        .populate({
+            path: 'comments',
+            select: '-__v'
+        })
+        .select('-__v')
         .then(dbPizzaData => {
         // If no pizza is found, send 404
         if (!dbPizzaData) {
