@@ -7,6 +7,7 @@
 // We could import the entire mongoose library, but we only need to worry about the 
 // Schema constructor and model function, so we'll just import them.
 const { Schema, model } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
 
 const PizzaSchema = new Schema(
     {
@@ -18,7 +19,11 @@ const PizzaSchema = new Schema(
         },
         createdAt: {
             type: Date,
-            default: Date.now
+            default: Date.now,
+            // To use a getter in Mongoose, we just need to add the key get to the field we are 
+            // looking to use it with in the schema. Just like a virtual, the getter will transform 
+            // the data before it gets to the controller(s).
+            get: (createdAtVal) => dateFormat(createdAtVal)
         },
         size: {
             type: String,
@@ -35,9 +40,11 @@ const PizzaSchema = new Schema(
         ]
     },
     // we need to tell the schema that it can use virtuals.
+    // we'll need to tell the Mongoose model that it should use any getter function we've specified.
     {
     toJSON: {
         virtuals: true,
+        getters: true
     },
     // We set id to false because this is a virtual that Mongoose returns, and we don’t need it.
     id: false

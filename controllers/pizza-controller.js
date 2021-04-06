@@ -47,6 +47,7 @@ const pizzaController = {
     },
 
     // createPizza
+    // notice that instead of req.body, body has been destructured!
     createPizza({ body }, res) {
         Pizza.create(body)
         .then(dbPizzaData => res.json(dbPizzaData))

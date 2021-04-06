@@ -33,6 +33,8 @@ const commentController = {
             return Pizza.findOneAndUpdate(
             { _id: params.pizzaId },
             { $pull: { comments: params.commentId } },
+            // Lastly, we return the updated pizza data, now without the _id of the comment 
+            // in the comments array, and return it to the user.
             { new: true }
             );
         })
