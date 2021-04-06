@@ -24,6 +24,36 @@ const commentController = {
         .catch(err => res.json(err));
     },
   
+    addReply({ params, body }, res) {
+        Comment.findOneAndUpdate(
+          { _id: params.commentId },
+          // use $addToSet to block duplicates instead of $push
+          { $push: { replies: body } },
+          { new: true }
+        )
+          .then(dbPizzaData => {
+            if (!dbPizzaData) {
+              res.status(404).json({ message: 'No pizza found with this id!' });
+              return;
+            }
+            res.json(dbPizzaData);
+          })
+          .catch(err => res.json(err));
+    },
+
+    // remove reply
+    removeReply({ params }, res) {
+        Comment.findOneAndUpdate(
+        { _id: params.commentId },
+        // Here, we're using the MongoDB $pull operator to remove the specific reply from the replies 
+        // array where the replyId matches the value of params.replyId passed in from the route.
+        { $pull: { replies: { replyId: params.replyId } } },
+        { new: true }
+        )
+        .then(dbPizzaData => res.json(dbPizzaData))
+        .catch(err => res.json(err));
+    },
+
     removeComment({ params }, res) {
         Comment.findOneAndDelete({ _id: params.commentId })
         .then(deletedComment => {
