@@ -29,7 +29,7 @@ const commentController = {
           { _id: params.commentId },
           // use $addToSet to block duplicates instead of $push
           { $push: { replies: body } },
-          { new: true }
+          { new: true, runValidators: true }
         )
           .then(dbPizzaData => {
             if (!dbPizzaData) {
