@@ -27,6 +27,8 @@ const printPizza = ({ _id, pizzaName, toppings, size, commentCount, createdBy, c
   $pizzaList.innerHTML += pizzaCard;
 };
 
+// we'll get all of our pizza data, transform it into JSON data that we can use, 
+// and run each one through the printPizza function using the .forEach() method.
 const getPizzaList = () => {
   fetch('/api/pizzas')
     .then(response => response.json())
